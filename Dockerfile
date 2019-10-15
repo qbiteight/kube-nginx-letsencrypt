@@ -1,11 +1,12 @@
-FROM fedora:24
-MAINTAINER Seth Jennings <sethdjennings@gmail.com>
+FROM certbot/certbot:v0.39.0
 
-RUN dnf install certbot -y && dnf clean all
-RUN mkdir /etc/letsencrypt
+MAINTAINER André Santos <andrerfcsantos@gmail.com>
 
-CMD ["/entrypoint.sh"]
+RUN mkdir -p /etc/letsencrypt /acme-challenge /hooks
 
 COPY secret-patch-template.json /
-COPY deployment-patch-template.json /
 COPY entrypoint.sh /
+COPY hooks/authenticator.sh /hooks
+COPY hooks/cleanup.sh /hooks
+
+CMD ["/entrypoint.sh"]
