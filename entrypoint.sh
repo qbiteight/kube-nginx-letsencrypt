@@ -5,6 +5,11 @@ if [[ -z $EMAIL || -z $DOMAINS || -z $SECRETNAME ]]; then
 	exit 1
 fi
 
+echo "Renewing certificates for:"
+echo "  EMAIL: $EMAIL"
+echo "  DOMAINS: $DOMAINS"
+echo "Certificates will be placed into the $SECRETNAME secret"
+
 NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
 
 echo "Requesting certificate"
