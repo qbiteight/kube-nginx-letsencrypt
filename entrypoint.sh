@@ -14,9 +14,10 @@ echo "  NAMESPACE: $NAMESPACE"
 echo "Certificates will be placed into the '$SECRETNAME' secret"
 
 echo "Requesting certificate"
-certbot certonly --manual --preferred-challenges http -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} --manual-auth-hook /hooks/authenticator.sh --manual-cleanup-hook /hooks/cleanup.sh
+certbot certonly --manual --preferred-challenges http -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} --manual-public-ip-logging-ok --manual-auth-hook /hooks/authenticator.sh --manual-cleanup-hook /hooks/cleanup.sh
 
 echo "Verifying path to certificate"
+tree /etc/letsencrypt
 CERTPATH=/etc/letsencrypt/live/$(echo $DOMAINS | cut -f1 -d',')
 ls $CERTPATH || exit 1
 
