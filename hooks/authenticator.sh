@@ -5,6 +5,7 @@ if [[ -z $ACME_SECRETNAME || -z $NAMESPACE ]]; then
 	echo "ACME_SECRETNAME or NAMESPACE not set"
     NAMESPACE="qa"
     ACME_SECRETNAME="qa-acmechallenge-secret"
+    echo "ls /hooks"
     ls /hooks
 fi
 
@@ -17,6 +18,7 @@ echo "s/ACME_SECRETNAMESPACE/${NAMESPACE}/"
 echo "s/ACME_TOKEN/${CERTBOT_TOKEN}/"
 echo "s/ACME_TOKEN_CONTENT/${CERTBOT_VALIDATION_B64}/"
 
+echo "cat /challenge-secret-patch-template.json"
 cat /challenge-secret-patch-template.json | \
 	sed "s/ACME_SECRETNAME/${ACME_SECRETNAME}/" | \
 	sed "s/ACME_SECRETNAMESPACE/${NAMESPACE}/" | \
@@ -24,6 +26,7 @@ cat /challenge-secret-patch-template.json | \
     sed "s/ACME_TOKEN_CONTENT/${CERTBOT_VALIDATION_B64}/" | \
 	> /challenge-secret-patch.json
 
+echo "ls /challenge-secret-patch.json"
 ls /challenge-secret-patch.json
 
 echo "ACME authenticator: updating challenge secret '${ACME_SECRETNAME}' with token '${CERTBOT_TOKEN}'"
