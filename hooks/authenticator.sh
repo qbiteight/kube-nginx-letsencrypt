@@ -1,6 +1,11 @@
 #/bin/bash
 set -euo pipefail
 
+echo "ACME authenticator: setting env vars"
+pwd
+source /hooks/.env
+env
+
 echo "ACME authenticator: preparing patch to update the challenge secret"
 
 CERTBOT_VALIDATION_B64=$(echo $CERTBOT_VALIDATION | base64)
