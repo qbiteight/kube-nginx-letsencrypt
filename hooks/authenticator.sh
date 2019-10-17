@@ -1,14 +1,11 @@
 #/bin/bash
 set -eo pipefail
 
-echo "ACME authenticator: setting env vars"
-ls /hooks
-. /hooks/.env
-
 if [[ -z $ACME_SECRETNAME || -z $NAMESPACE ]]; then
 	echo "ACME_SECRETNAME or NAMESPACE not set"
     NAMESPACE="qa"
     ACME_SECRETNAME="qa-acmechallenge-secret"
+    ls /hooks
 fi
 
 echo "ACME authenticator: preparing patch to update the challenge secret"
