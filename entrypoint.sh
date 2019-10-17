@@ -14,7 +14,7 @@ echo "  DOMAINS: $DOMAINS"
 echo "  NAMESPACE: $NAMESPACE"
 
 echo "Requesting certificate"
-certbot certonly --manual --preferred-challenges http -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} --manual-public-ip-logging-ok --manual-auth-hook /hooks/authenticator.sh
+certbot certonly --dry-run --manual --preferred-challenges http -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} --manual-public-ip-logging-ok --manual-auth-hook /hooks/authenticator.sh
 
 echo "Verifying path to certificate"
 tree /etc/letsencrypt
