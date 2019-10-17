@@ -11,4 +11,6 @@ COPY entrypoint.sh /
 COPY hooks/authenticator.sh /hooks
 COPY hooks/cleanup.sh /hooks
 
+RUN chmod +x /hooks/authenticator.sh /hooks/cleanup.sh
+
 CMD ["/entrypoint.sh"]
