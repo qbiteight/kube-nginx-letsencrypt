@@ -1,4 +1,3 @@
 #/bin/bash
 
-echo "Post hook: removing ACME challenge"
-rm -rf /acme-challenge/*
+echo "Post hook of ACME challenge"
