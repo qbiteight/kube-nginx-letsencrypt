@@ -19,12 +19,7 @@ echo "s/ACME_TOKEN/${CERTBOT_TOKEN}/"
 echo "s/ACME_TOKEN_CONTENT/${CERTBOT_VALIDATION_B64}/"
 
 echo "cat /challenge-secret-patch-template.json"
-cat /challenge-secret-patch-template.json | \
-	sed "s/ACME_SECRETNAME/${ACME_SECRETNAME}/" | \
-	sed "s/ACME_SECRETNAMESPACE/${NAMESPACE}/" | \
-    sed "s/ACME_TOKEN/${CERTBOT_TOKEN}/" | \
-    sed "s/ACME_TOKEN_CONTENT/${CERTBOT_VALIDATION_B64}/" | \
-	> /challenge-secret-patch.json
+cat /challenge-secret-patch-template.json | sed "s/ACME_SECRETNAME/${ACME_SECRETNAME}/g" | sed "s/ACME_SECRETNAMESPACE/${NAMESPACE}/g" | sed "s/ACME_TOKEN/${CERTBOT_TOKEN}/g" | sed "s/ACME_TOKEN_CONTENT/${CERTBOT_VALIDATION_B64}/g" | > /challenge-secret-patch.json
 
 echo "ls /challenge-secret-patch.json"
 ls /challenge-secret-patch.json
