@@ -10,7 +10,12 @@ fi
 
 echo "ACME authenticator: preparing patch to update the challenge secret"
 
-CERTBOT_VALIDATION_B64=$(echo $CERTBOT_VALIDATION | base64)
+CERTBOT_VALIDATION_B64=$(echo $CERTBOT_VALIDATION | base64 | tr -d '\n')
+
+echo "s/ACME_SECRETNAME/${ACME_SECRETNAME}/"
+echo "s/ACME_SECRETNAMESPACE/${NAMESPACE}/"
+echo "s/ACME_TOKEN/${CERTBOT_TOKEN}/"
+echo "s/ACME_TOKEN_CONTENT/${CERTBOT_VALIDATION_B64}/"
 
 cat /challenge-secret-patch-template.json | \
 	sed "s/ACME_SECRETNAME/${ACME_SECRETNAME}/" | \
