@@ -25,15 +25,20 @@ echo "cat /challenge-secret-patch.json"
 cat /challenge-secret-patch.json
 
 echo "ACME authenticator: updating challenge secret '${ACME_SECRETNAME}' with token '${CERTBOT_TOKEN}'"
-curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/challenge-secret-patch.json https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/${ACME_SECRETNAME}
+curl -i --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/challenge-secret-patch.json https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/${ACME_SECRETNAME}
 
 
-echo "ACME authenticator: waiting 30 seconds before attempting to read from secret"
-echo "Start of 30 seconds: `date`"
-sleep 30
-echo "End of 30 seconds: `date`"
+echo "ACME authenticator: waiting before attempting to read from secret"
 
-CHALLENGE_URL="http://${CERTBOT_DOMAIN}/.well-known/acme-challenge/${CERTBOT_TOKEN}"
+echo "Start of attempts: `date`"
+for i in {1..12}
+do
+    echo "Attempt: $i"
+    CHALLENGE_URL="http://${CERTBOT_DOMAIN}/.well-known/acme-challenge/${CERTBOT_TOKEN}"
+    echo "curl -i $CHALLENGE_URL"
+    curl -i $CHALLENGE_URL
+    sleep 10
+done
+echo "End of attempts: `date`"
 
-echo "curl -i $CHALLENGE_URL"
-curl -i $CHALLENGE_URL
+
