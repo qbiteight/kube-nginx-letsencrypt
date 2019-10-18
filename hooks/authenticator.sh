@@ -4,6 +4,9 @@ echo "cat /hooks/.env"
 cat /hooks/.env
 source /hooks/.env
 
+echo "cat /etc/resolv.conf"
+cat /etc/resolv.conf
+
 echo "Variables Before: ACME_SECRETNAME='$ACME_SECRETNAME' | NAMESPACE: '$NAMESPACE'"
 
 if [[ -z $ACME_SECRETNAME || -z $NAMESPACE ]]; then
@@ -34,7 +37,7 @@ echo "cat /challenge-secret-patch.json"
 cat /challenge-secret-patch.json
 
 echo "ACME authenticator: updating challenge secret '${ACME_SECRETNAME}' with token '${CERTBOT_TOKEN}'"
-curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/challenge-secret-patch.json https://kubernetes/api/v1/namespaces/${NAMESPACE}/secrets/${ACME_SECRETNAME}
+curl -v --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/challenge-secret-patch.json https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/${ACME_SECRETNAME}
 
 echo "ACME authenticator: waiting 5 seconds before attempting to read from secret"
 sleep 5
