@@ -27,18 +27,24 @@ cat /challenge-secret-patch.json
 echo "ACME authenticator: updating challenge secret '${ACME_SECRETNAME}' with token '${CERTBOT_TOKEN}'"
 curl -i --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/challenge-secret-patch.json https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/${ACME_SECRETNAME}
 
+CHALLENGE_URL="http://${CERTBOT_DOMAIN}/.well-known/acme-challenge/${CERTBOT_TOKEN}"
+echo "ACME authenticator: Attempting to verify the challenge before passing control to certbot again"
 
-echo "ACME authenticator: waiting before attempting to read from secret"
-
-echo "Start of attempts: `date`"
 for i in {1..12}
 do
-    echo "Attempt: $i"
-    CHALLENGE_URL="http://${CERTBOT_DOMAIN}/.well-known/acme-challenge/${CERTBOT_TOKEN}"
-    echo "curl -i $CHALLENGE_URL"
-    curl -i $CHALLENGE_URL
+    RES=$(curl -i $CHALLENGE_URL | head -n1)
+    echo "`date`: Attempt $i: $RES"
+    if [[ $RES == *"200 OK"* ]]; then
+        echo "1";
+        exit 0
+    fi
+    
+    if [[ $i == 12 ]]; then
+        echo "ACME authenticator: max attempts reached to get the callenge. Quitting. ";
+        exit 1
+    fi
+
     sleep 10
 done
-echo "End of attempts: `date`"
 
 
