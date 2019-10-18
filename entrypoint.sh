@@ -33,4 +33,4 @@ echo "Preparing patch to update the certificate secret ($SECRETNAME)"
 cat /ssl-secret-patch-template.json | sed "s/SECRETNAMESPACE/${NAMESPACE}/" | sed "s/SECRETNAME/${SECRETNAME}/" | sed "s/TLSCERT/$(cat ${CERTPATH} | base64 | tr -d '\n')/" | sed "s/TLSKEY/$(cat ${KEYPATH} |  base64 | tr -d '\n')/" > /ssl-secret-patch.json
 
 echo "Updating certificate secret '$SECRETNAME'"
-curl -sS -i --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -v -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/ssl-secret-patch.json https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/${SECRETNAME}
+curl -sS -i --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/ssl-secret-patch.json https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/${SECRETNAME}
