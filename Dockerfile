@@ -9,6 +9,7 @@ COPY ssl-secret-patch-template.json /
 COPY challenge-secret-patch-template.json /
 COPY entrypoint.sh /
 COPY hooks/authenticator.sh /hooks
+COPY hooks/.env-template /hooks
 
 RUN chmod +x /hooks/authenticator.sh
 
