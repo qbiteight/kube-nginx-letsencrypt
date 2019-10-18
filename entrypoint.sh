@@ -22,11 +22,11 @@ echo "Verifying path to certificate exists"
 tree /etc/letsencrypt
 CERTPATH=/etc/letsencrypt/csr/0000_csr-certbot.pem
 KEYPATH=/etc/letsencrypt/keys/0000_key-certbot.pem
-ls $CERTPATH $KEYPATH || (echo "Path to cert or key doesn't exist: CERTPATH: $CERTPATH KEYPATH: $KEYPATH" && exit 1)
+stat $CERTPATH $KEYPATH 2> /dev/null > /dev/null || (echo "Path to cert or key doesn't exist: CERTPATH: $CERTPATH KEYPATH: $KEYPATH" && exit 1)
 
-ls /ssl-secret-patch.json || (echo "Path to ssl secret patch doesn't exist" && exit 1)
+stat /ssl-secret-patch-template.json 2> /dev/null > /dev/null || (echo "Path to ssl secret patch doesn't exist" && exit 1)
 
-echo "SSL secret patch file exists. Exectuing template"
+echo "SSL secret patch file exists. Executing template"
 cat /ssl-secret-patch-template.json | sed "s/SECRETNAMESPACE/${NAMESPACE}/" | sed "s/SECRETNAME/${SECRETNAME}/" | sed "s/TLSCERT/$(cat ${CERTPATH} | base64 | tr -d '\n')/" | sed "s/TLSKEY/$(cat ${KEYPATH} |  base64 | tr -d '\n')/" > /ssl-secret-patch.json
 
 echo "Updating certificate secret '$SECRETNAME'"
