@@ -18,6 +18,8 @@ cat /hooks/.env-template | sed "s/ACME_SECRETNAME_TEMPLATE/${ACME_SECRETNAME}/" 
 echo "Requesting certificate"
 certbot certonly --dry-run --manual --preferred-challenges http -n --agree-tos --email ${EMAIL} --no-self-upgrade -d ${DOMAINS} --manual-public-ip-logging-ok --manual-auth-hook /hooks/authenticator.sh
 
+echo "Back to main script after certbot command: `date`"
+
 echo "Verifying path to certificate"
 tree /etc/letsencrypt
 CERTPATH=/etc/letsencrypt/csr/0000_csr-certbot.pem
