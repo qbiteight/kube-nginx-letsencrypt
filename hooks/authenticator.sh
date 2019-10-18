@@ -20,14 +20,14 @@ cat /challenge-secret-patch-template.json | sed "s/ACME_SECRETNAME/${ACME_SECRET
 stat /challenge-secret-patch.json 2> /dev/null > /dev/null || (echo "ACME authenticator: Patch file not found" && exit 1)
 
 echo "ACME authenticator: updating challenge secret '${ACME_SECRETNAME}' with token '${CERTBOT_TOKEN}'"
-curl -sS -I --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/challenge-secret-patch.json https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/${ACME_SECRETNAME}
+curl -i --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/challenge-secret-patch.json https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/${ACME_SECRETNAME}
 
 CHALLENGE_URL="http://${CERTBOT_DOMAIN}/.well-known/acme-challenge/${CERTBOT_TOKEN}"
 echo "ACME authenticator: Attempting to verify the challenge at '$CHALLENGE_URL' before passing control to certbot again"
 
 for i in {1..24}
 do
-    RES=$(curl -sS -I $CHALLENGE_URL | head -n1)
+    RES=$(curl -i $CHALLENGE_URL | head -n1)
     echo "`date`: Attempt $i: $RES"
     if [[ $RES == *"200 OK"* ]]; then
         exit 0
