@@ -32,3 +32,8 @@ echo "ACME authenticator: waiting 30 seconds before attempting to read from secr
 echo "Start of 30 seconds: `date`"
 sleep 30
 echo "End of 30 seconds: `date`"
+
+CHALLENGE_URL="http://${CERTBOT_DOMAIN}/.well-known/acme-challenge/${CERTBOT_TOKEN}"
+
+echo "curl -i $CHALLENGE_URL"
+curl -i $CHALLENGE_URL
