@@ -25,7 +25,7 @@ curl -i --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Author
 CHALLENGE_URL="http://${CERTBOT_DOMAIN}/.well-known/acme-challenge/${CERTBOT_TOKEN}"
 echo "ACME authenticator: Attempting to verify the challenge at '$CHALLENGE_URL' before passing control to certbot again"
 
-for i in {1..24}
+for i in {1..50}
 do
     RES=$(curl -i $CHALLENGE_URL | head -n1)
     echo "`date`: Attempt $i: $RES"
@@ -33,7 +33,7 @@ do
         exit 0
     fi
     
-    if [[ $i == 24 ]]; then
+    if [[ $i == 50 ]]; then
         echo "ACME authenticator: max attempts reached to get the callenge. Quitting."
         exit 1
     fi

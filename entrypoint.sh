@@ -20,9 +20,16 @@ certbot certonly --manual --preferred-challenges http -n --agree-tos --email ${E
 
 echo "Verifying path to certificate exists"
 tree /etc/letsencrypt
-CERTPATH=/etc/letsencrypt/csr/0000_csr-certbot.pem
-KEYPATH=/etc/letsencrypt/keys/0000_key-certbot.pem
+
+BASE_CERTPATH=/etc/letsencrypt/live
+MAIN_DOMAIN=$(echo $DOMAINS | cut -f1 -d',')
+
+CERTPATH="$BASE_CERTPATH/$MAIN_DOMAIN/fullchain.pem"
+KEYPATH="$BASE_CERTPATH/$MAIN_DOMAIN/privkey.pem"
 ls $CERTPATH $KEYPATH || exit 1
+
+echo "Renewal config /etc/letencrypt/renewal/$MAIN_DOMAIN.conf"
+cat /etc/letencrypt/renewal/$MAIN_DOMAIN.conf
 
 ls /ssl-secret-patch-template.json || exit 1
 
