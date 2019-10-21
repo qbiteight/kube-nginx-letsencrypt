@@ -11,6 +11,7 @@ echo "Requesting certificates for:"
 echo "  EMAIL: $EMAIL"
 echo "  DOMAINS: $DOMAINS"
 echo "  NAMESPACE: $NAMESPACE"
+echo "  PODS: $NGINX_PODS"
 
 echo "Creating env file"
 cat /hooks/.env-template | sed "s/ACME_SECRETNAME_TEMPLATE/${ACME_SECRETNAME}/" | sed "s/NAMESPACE_TEMPLATE/${NAMESPACE}/" > /hooks/.env
@@ -38,3 +39,15 @@ cat /ssl-secret-patch-template.json | sed "s/SECRETNAMESPACE/${NAMESPACE}/" | se
 
 echo "Updating certificate secret '$SECRETNAME'"
 curl -i --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -XPATCH  -H "Accept: application/json, */*" -H "Content-Type: application/strategic-merge-patch+json" -d @/ssl-secret-patch.json https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/${SECRETNAME}
+
+if [[ $NGINX_PODS != "" ]]; then
+	echo "Waiting 30 seconds before restarting nginx pods"
+	sleep 30
+	
+	NGINX_PODS=$(echo $NGINX_PODS | sed 's/,/ /')
+	for NGINX_POD in $NGINX_PODS
+	do
+		echo "Restarting ${NGINX_POD} pod"
+		curl -i --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" -k -XPOST  -H "Accept: */*" https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/pods/${NGINX_POD}/exec?command=service&command=nginx&command=restart
+	done
+fi

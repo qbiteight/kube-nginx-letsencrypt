@@ -16,4 +16,12 @@ Provide the following environment variables to the image:
     
    * **SECRETNAME**
 
-        The `kubernetes.io/tls` secret name where to save the certificate.  
+        The `kubernetes.io/tls` secret name where to save the certificate.
+
+   * **ACME_SECRETNAME**
+
+        Secret to hold the acme tokens. Should be of type `Opaque`.
+
+   * **NGINX_PODS**
+
+        Comma separated list of pods with nginx that should be restarted after obtaining the certificates. 
