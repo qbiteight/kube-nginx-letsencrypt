@@ -1,4 +1,4 @@
 #/bin/bash
 
-docker build --tag andrerfcsantos/kube-letsencrypt:0.1.9 .
-docker push andrerfcsantos/kube-letsencrypt:0.1.9
+docker build --tag qbiteight/kube-letsencrypt:0.1.9 .
+docker push qbiteight/kube-letsencrypt:0.1.9

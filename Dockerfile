@@ -1,6 +1,6 @@
 FROM fedora:32
 
-RUN dnf install tree curl certbot base64 sed -y && dnf clean all
+RUN dnf install tree curl certbot coreutils sed -y && dnf clean all
 RUN mkdir -p /etc/letsencrypt /acme-challenge /hooks
 
 COPY ssl-secret-patch-template.json /
